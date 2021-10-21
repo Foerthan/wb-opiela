@@ -4,7 +4,10 @@ import XLSX from "xlsx";
 import path from "path";
 import { ValidateRow, SortCategories, InitCap, SortZones } from "./utils";
 import dotenv from "dotenv";
+import fs from "fs";
 dotenv.config();
+
+const outputDirectory = path.join(__dirname, "../output");
 
 /* I wanted to break up the code into smaller, task-oriented blocks,
 but to do so without top-level await is most easily accomplished through
@@ -13,7 +16,8 @@ a IIFE. */
   try {
     const data = await GetDataset();
     const workbook = BuildWorkbook(data);
-    XLSX.writeFile(workbook, path.join(__dirname, "../", "output/report.xlsx"));
+    if(!fs.existsSync(outputDirectory)) fs.mkdirSync(outputDirectory);
+    XLSX.writeFile(workbook, path.join(outputDirectory, "report.xlsx"));
   } catch (e) {
     console.log(`Report could not be generated. Details: ${e}.`);
   }
